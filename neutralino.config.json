@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
+  "applicationId": "js.neutralino.zero",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "documentRoot": "/packages/frontend/dist/",
+  "nativeAllowList": [],
+  "modes": {
+    "window": {
+      "title": "ilivercare-app",
+      "width": 800,
+      "height": 500,
+      "minWidth": 400,
+      "minHeight": 200,
+      "icon": "/packages/frontend/public/icon.png"
+    }
+  },
+  "cli": {
+    "binaryName": "ilivercare-app",
+    "resourcesPath": "/package/frontend/public/",
+    "extensionsPath": "/extensions/",
+    "binaryVersion": "4.10.0",
+    "clientVersion": "3.8.2",
+    "frontendLibrary": {
+      "patchFile": "/packages/frontend/index.html",
+      "devUrl": "http://localhost:5173"
+    }
+  }
+}

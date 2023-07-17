@@ -1,0 +1,19 @@
+{
+  "name": "ilivercare-app",
+  "version": "0.0.1",
+  "workspaces": [
+    "packages/**"
+  ],
+  "scripts": {
+    "frontend:dev": "npm run dev --prefix packages/frontend",
+    "app:dev": "neu run --frontend-lib-dev -- --window-enable-inspector",
+    "dev": "concurrently -k \"npm run frontend:dev\" \"wait-on tcp:5173 && npm run app:dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "wait-on": "^7.0.1"
+  },
+  "dependencies": {
+    "@neutralinojs/neu": "^9.6.0"
+  }
+}
