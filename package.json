@@ -14,6 +14,10 @@
     "wait-on": "^7.0.1"
   },
   "dependencies": {
-    "@neutralinojs/neu": "^9.6.0"
+    "@fontsource/inter": "^5.0.5",
+    "@hookform/resolvers": "^3.1.1",
+    "@neutralinojs/neu": "^9.6.0",
+    "react-hook-form": "^7.45.2",
+    "zod": "^3.21.4"
   }
 }

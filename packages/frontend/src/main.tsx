@@ -5,11 +5,16 @@ import { ChakraBaseProvider } from '@chakra-ui/react'
 import { theme } from './chakra/theme.ts'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import LoginPage from './pages/login/index.tsx'
+import RegisterPage from './pages/register/index.tsx'
 
 const routes = createBrowserRouter([
   {
     path: '/',
     element: <LoginPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
   },
 ])
 
