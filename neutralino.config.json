@@ -7,14 +7,14 @@
   "enableServer": true,
   "enableNativeAPI": true,
   "documentRoot": "/packages/frontend/dist/",
-  "nativeAllowList": [],
+  "nativeAllowList": ["window.*"],
   "modes": {
     "window": {
       "title": "ilivercare-app",
       "width": 800,
-      "height": 500,
-      "minWidth": 400,
-      "minHeight": 200,
+      "height": 800,
+      "minWidth": 800,
+      "minHeight": 800,
       "icon": "/packages/frontend/public/icon.png"
     }
   },
