@@ -31,6 +31,7 @@ const LoginPage: React.FC<Props> = () => {
   const handleClick = useCallback(() => {
     setShowPassword((state) => !state)
   }, [])
+
   const { control, handleSubmit } = useForm<LoginBody>({
     resolver: zodResolver(loginBodySchema),
   })
@@ -51,12 +52,32 @@ const LoginPage: React.FC<Props> = () => {
 
   return (
     <Flex w="100vw" h="100vh" justifyContent="center" alignItems="center">
-      <Box bg="white" px="20" py="16" rounded="xl">
-        <Img src="/icon.png" h="28" mx="auto" mb={10} />
-        <Heading color="gray.700" as="h1">
+      <Box
+        bg="white"
+        px={{ base: 16, '2xl': 20 }}
+        py={{ base: 10, '2xl': 16 }}
+        rounded="xl"
+      >
+        <Img
+          src="/icon.png"
+          h={{ base: 20, '2xl': 28 }}
+          mx="auto"
+          mb={{ base: 5, '2xl': 10 }}
+        />
+        <Heading
+          color="gray.700"
+          fontSize={{ base: '2xl', '2xl': 'unset' }}
+          textAlign="center"
+          as="h1"
+        >
           Welcome To ILiverCare App
         </Heading>
-        <Text color="green.600" as="p" fontSize="sm" textAlign="center">
+        <Text
+          color="green.600"
+          as="p"
+          fontSize={{ base: 'xs', '2xl': 'sm' }}
+          textAlign="center"
+        >
           Empowering Early Detection, Defending Liver Health
         </Text>
 
@@ -74,7 +95,6 @@ const LoginPage: React.FC<Props> = () => {
                     <Input
                       type="email"
                       placeholder="Email"
-                      size="lg"
                       onBlur={onBlur}
                       onChange={(e) => onChange(e.target.value)}
                       name={name}

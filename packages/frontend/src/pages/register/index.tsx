@@ -15,6 +15,7 @@ import {
   Text,
   Select,
   FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react'
 import { MdAlternateEmail } from 'react-icons/md'
 import { RiLockPasswordFill } from 'react-icons/ri'
@@ -24,6 +25,9 @@ import { window as Window } from '@neutralinojs/lib'
 import { Controller, useForm } from 'react-hook-form'
 import { RegisterBody, regsiterBodySchema } from '../../schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useHttpsCallable } from 'react-firebase-hooks/functions'
+import { firebaseFunctions } from '../../firebase'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {}
 
@@ -32,10 +36,20 @@ const RegisterPage: React.FC<Props> = () => {
   const handleClick = useCallback(() => {
     setShowPassword((state) => !state)
   }, [])
+  const toast = useToast({
+    position: 'top-right',
+  })
 
   const { control, handleSubmit } = useForm<RegisterBody>({
     resolver: zodResolver(regsiterBodySchema),
   })
+
+  const [registerAccount, isLoading, error] = useHttpsCallable<
+    unknown,
+    { success: boolean; text: string }
+  >(firebaseFunctions, 'registerAccount')
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const initialize = async () => {
@@ -46,14 +60,48 @@ const RegisterPage: React.FC<Props> = () => {
     })
   }, [])
 
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error?.message,
+        status: 'error',
+      })
+    }
+  }, [error, toast])
+
   const onSubmit = handleSubmit((data) => {
-    console.log(data)
+    registerAccount(data)
+      .then((response) => {
+        if (response) {
+          toast({
+            title: 'Success',
+            description: response.data.text,
+            status: 'success',
+          })
+          navigate('/')
+        }
+      })
+      .catch((e) => {
+        console.error(e)
+      })
   })
 
   return (
     <Flex w="100vw" h="100vh" justifyContent="center" alignItems="center">
-      <Box bg="white" px="20" py="16" rounded="xl" minWidth="650px">
-        <Heading color="gray.700" as="h1" textTransform="capitalize">
+      <Box
+        bg="white"
+        px={{ base: 16, '2xl': 20 }}
+        py={{ base: 10, '2xl': 16 }}
+        rounded="xl"
+        minWidth="650px"
+      >
+        <Heading
+          color="gray.700"
+          fontSize={{ base: '2xl', '2xl': '4xl' }}
+          as="h1"
+          textTransform="capitalize"
+        >
           Create an account
         </Heading>
 
@@ -217,7 +265,12 @@ const RegisterPage: React.FC<Props> = () => {
                 </FormControl>
               )}
             />
-            <Button size="lg" colorScheme="whatsapp" type="submit">
+            <Button
+              size="lg"
+              colorScheme="whatsapp"
+              type="submit"
+              isLoading={isLoading}
+            >
               Register
             </Button>
           </Stack>
