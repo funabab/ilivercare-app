@@ -15,6 +15,7 @@ import {
   Stack,
   Text,
   FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react'
 import { MdAlternateEmail } from 'react-icons/md'
 import { RiLockPasswordFill } from 'react-icons/ri'
@@ -23,6 +24,9 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 import { Controller, useForm } from 'react-hook-form'
 import { LoginBody, loginBodySchema } from '../../schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
+import { firebaseAuth } from '../../firebase'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {}
 
@@ -31,23 +35,52 @@ const LoginPage: React.FC<Props> = () => {
   const handleClick = useCallback(() => {
     setShowPassword((state) => !state)
   }, [])
+  const toast = useToast({
+    position: 'top-right',
+  })
+  const navigate = useNavigate()
+
+  const [login, _user, isLoading, error] =
+    useSignInWithEmailAndPassword(firebaseAuth)
 
   const { control, handleSubmit } = useForm<LoginBody>({
     resolver: zodResolver(loginBodySchema),
   })
 
   useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error?.message,
+        status: 'error',
+      })
+    }
+  }, [error, toast])
+
+  useEffect(() => {
     const initialize = async () => {
       await Window.setTitle('Login to IliverCare App')
       await Window.maximize()
     }
+
     initialize().catch((e) => {
       console.error(e)
     })
   }, [])
 
   const onSubmit = handleSubmit((data) => {
-    console.log(data)
+    login(data.email, data.password)
+      .then(() => {
+        toast({
+          title: 'Success',
+          description: 'Login Successful',
+          status: 'success',
+        })
+        navigate('/dashboard')
+      })
+      .catch((e) => {
+        console.error(e)
+      })
   })
 
   return (
@@ -95,6 +128,7 @@ const LoginPage: React.FC<Props> = () => {
                     <Input
                       type="email"
                       placeholder="Email"
+                      size="lg"
                       onBlur={onBlur}
                       onChange={(e) => onChange(e.target.value)}
                       name={name}
@@ -154,7 +188,12 @@ const LoginPage: React.FC<Props> = () => {
               )}
             />
 
-            <Button size="lg" colorScheme="whatsapp" type="submit">
+            <Button
+              size="lg"
+              colorScheme="whatsapp"
+              type="submit"
+              isLoading={isLoading}
+            >
               Login
             </Button>
           </Stack>

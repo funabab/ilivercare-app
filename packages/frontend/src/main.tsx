@@ -6,6 +6,8 @@ import { theme } from './chakra/theme.ts'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import LoginPage from './pages/login/index.tsx'
 import RegisterPage from './pages/register/index.tsx'
+import VerifyEmailPage from './pages/verify-email/index.tsx'
+import DashboardHomePage from './pages/dashboard/index.tsx'
 
 const routes = createBrowserRouter([
   {
@@ -15,6 +17,14 @@ const routes = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    path: '/verify-email',
+    element: <VerifyEmailPage />,
+  },
+  {
+    path: '/dashboard',
+    element: <DashboardHomePage />,
   },
 ])
 

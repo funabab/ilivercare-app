@@ -54,6 +54,7 @@ const RegisterPage: React.FC<Props> = () => {
   useEffect(() => {
     const initialize = async () => {
       await Window.setTitle('Create an account')
+      await Window.maximize()
     }
     initialize().catch((e) => {
       console.error(e)
