@@ -6,16 +6,18 @@ import {
   Heading,
   Icon,
   Img,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Text,
+  Button,
 } from '@chakra-ui/react'
 import { RxAvatar } from 'react-icons/rx'
-import { MotionConfig } from 'framer-motion'
 import { useAuthState, useSignOut } from 'react-firebase-hooks/auth'
 import { firebaseAuth } from '../firebase'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu'
 
 interface Props {}
 
@@ -39,10 +41,10 @@ const Header: React.FC<Props> = () => {
   }, [user])
 
   return (
-    <Flex bg="gray.200" py="5" shadow="md">
+    <Flex bg="gray.200" py="5" shadow="md" shrink={0}>
       <Container
-        maxW="8xl"
-        px="10"
+        maxW="container.xl"
+        // px="10"
         display="flex"
         justifyContent="space-between"
         alignItems="center"
@@ -60,31 +62,29 @@ const Header: React.FC<Props> = () => {
             <Text fontSize="md">iLiverCare</Text>
           </Heading>
         </Box>
-        <MotionConfig reducedMotion="always">
-          <Menu>
-            <MenuButton>
-              <Flex alignItems="center" columnGap={3}>
-                <Box>
-                  <Text fontSize="sm">{user?.displayName}</Text>
-                  <Text
-                    color="gray.600"
-                    fontSize="sm"
-                    as="p"
-                    textAlign="center"
-                  >
-                    {role}
-                  </Text>
-                </Box>
-                <Icon as={RxAvatar} fontSize="4xl" color="gray.700" />
-              </Flex>
-            </MenuButton>
-            <MenuList>
-              <MenuItem onClick={() => logout()} disabled={isLoading}>
-                Logout
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </MotionConfig>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button
+              variant="ghost"
+              display="flex"
+              alignItems="center"
+              columnGap={3}
+            >
+              <Box>
+                <Text fontSize="sm">{user?.displayName}</Text>
+                <Text color="gray.600" fontSize="sm" as="p" textAlign="center">
+                  {role}
+                </Text>
+              </Box>
+              <Icon as={RxAvatar} fontSize="4xl" color="gray.700" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => logout()} disabled={isLoading}>
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </Container>
     </Flex>
   )

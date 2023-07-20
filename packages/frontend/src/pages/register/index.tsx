@@ -40,7 +40,7 @@ const RegisterPage: React.FC<Props> = () => {
     position: 'top-right',
   })
 
-  const { control, handleSubmit } = useForm<RegisterBody>({
+  const { control, handleSubmit, reset } = useForm<RegisterBody>({
     resolver: zodResolver(regsiterBodySchema),
   })
 
@@ -80,6 +80,7 @@ const RegisterPage: React.FC<Props> = () => {
             description: response.data.text,
             status: 'success',
           })
+          reset()
           navigate('/')
         }
       })

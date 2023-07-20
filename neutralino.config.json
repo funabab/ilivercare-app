@@ -7,7 +7,7 @@
   "enableServer": true,
   "enableNativeAPI": true,
   "documentRoot": "/packages/frontend/dist/",
-  "nativeAllowList": ["window.*"],
+  "nativeAllowList": ["app.*", "window.*"],
   "modes": {
     "window": {
       "title": "ilivercare-app",
