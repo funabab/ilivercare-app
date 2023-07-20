@@ -25,7 +25,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { LoginBody, loginBodySchema } from '../../schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
-import { firebaseAuth } from '../../firebase'
+import { errors, firebaseAuth } from '../../firebase'
 import { useNavigate } from 'react-router-dom'
 
 interface Props {}
@@ -49,13 +49,23 @@ const LoginPage: React.FC<Props> = () => {
 
   useEffect(() => {
     if (error) {
+      if (error.message.indexOf('auth/email-not-verified') !== -1) {
+        toast({
+          title: 'Error',
+          description: 'Email not verified',
+          status: 'error',
+        })
+        navigate('/verify-email')
+        return
+      }
+
       toast({
         title: 'Error',
-        description: error?.message,
+        description: errors[error.code],
         status: 'error',
       })
     }
-  }, [error, toast])
+  }, [error, toast, navigate])
 
   useEffect(() => {
     const initialize = async () => {
@@ -70,13 +80,10 @@ const LoginPage: React.FC<Props> = () => {
 
   const onSubmit = handleSubmit((data) => {
     login(data.email, data.password)
-      .then(() => {
-        toast({
-          title: 'Success',
-          description: 'Login Successful',
-          status: 'success',
-        })
-        navigate('/dashboard')
+      .then((response) => {
+        if (response) {
+          navigate('/dashboard')
+        }
       })
       .catch((e) => {
         console.error(e)

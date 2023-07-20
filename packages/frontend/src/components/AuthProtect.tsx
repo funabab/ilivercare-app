@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { firebaseAuth } from '../firebase'
 import { Bars } from 'react-loader-spinner'
 import { useNavigate } from 'react-router-dom'
 import { Flex } from '@chakra-ui/react'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { firebaseAuth } from '../firebase'
 
 interface Props {}
 
@@ -14,11 +14,11 @@ const AuthProtect: React.FC<React.PropsWithChildren<Props>> = ({
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (user) {
-      if (!user.emailVerified) {
-        navigate('/verify-email')
-      }
-    } else {
+    if (isLoading) {
+      return
+    }
+
+    if (!user) {
       navigate('/')
     }
   }, [user, isLoading, navigate])

@@ -1,7 +1,7 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
+import { beforeUserSignedIn } from 'firebase-functions/v2/identity'
 import { getAuth } from 'firebase-admin/auth'
 import { signInWithCustomToken, sendEmailVerification } from 'firebase/auth'
-import { getFirestore } from 'firebase-admin/firestore'
 import { FirebaseError } from '@firebase/util'
 import { initializeApp } from 'firebase-admin/app'
 import { regsiterBodySchema } from '../../src/schemas'
@@ -25,28 +25,24 @@ export const registerAccount = onCall({ maxInstances: 10 }, async (request) => {
 
   try {
     const data = regsiterBodySchema.parse(request.data)
-    const firestore = getFirestore()
     const auth = getAuth()
-    await firestore.runTransaction(async (transaction) => {
-      const user = await auth.createUser({
-        email: data.email,
-        password: data.password,
-        displayName: `${data.firstName} ${data.lastName}`,
-        emailVerified: false,
-      })
-
-      transaction.set(firestore.doc(`user/${user.uid}`), {
-        ...(JSON.parse(JSON.stringify(user)) as object),
-        role: data.role,
-      })
-
-      const token = await auth.createCustomToken(user.uid)
-      const clientUserCredential = await signInWithCustomToken(
-        firebaseClientAuth,
-        token
-      )
-      await sendEmailVerification(clientUserCredential.user)
+    const user = await auth.createUser({
+      email: data.email,
+      password: data.password,
+      displayName: `${data.firstName} ${data.lastName}`,
+      emailVerified: false,
     })
+
+    await auth.setCustomUserClaims(user.uid, {
+      role: data.role,
+    })
+
+    const token = await auth.createCustomToken(user.uid)
+    const clientUserCredential = await signInWithCustomToken(
+      firebaseClientAuth,
+      token
+    )
+    await sendEmailVerification(clientUserCredential.user)
 
     return {
       success: true,
@@ -71,3 +67,18 @@ export const registerAccount = onCall({ maxInstances: 10 }, async (request) => {
     )
   }
 })
+
+export const beforeUserSignedInHandler = beforeUserSignedIn(
+  { maxInstances: 10 },
+  (event) => {
+    const user = event.data
+    if (!user?.emailVerified) {
+      throw new HttpsError(
+        'aborted',
+        'auth/email-not-verified Email not verified'
+      )
+    } else if (!user?.customClaims?.role) {
+      throw new HttpsError('aborted', 'Role not set')
+    }
+  }
+)
