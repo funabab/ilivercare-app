@@ -23,7 +23,6 @@ import {
   Button,
   ButtonGroup,
   useDisclosure,
-  Link,
 } from '@chakra-ui/react'
 import DashboardLayout from '../../layouts/DashboardLayout'
 import { BiHealth } from 'react-icons/bi'
@@ -45,6 +44,7 @@ const DashboardHomePage: React.FC<Props> = () => {
   useEffect(() => {
     Window.setTitle('iLiverCare Dashboard').catch((e) => console.log(e))
   }, [])
+
   return (
     <DashboardLayout>
       <Container maxW="container.xl" py={10}>
@@ -177,7 +177,9 @@ const DashboardHomePage: React.FC<Props> = () => {
                   <Td>Male</Td>
                   <Td>25, July 2023</Td>
                   <Td>
-                    <Text color="gray.700">Unevaluated</Text>
+                    <Text color="gray.700" textTransform="capitalize">
+                      Unevaluated
+                    </Text>
                   </Td>
                   <Td>
                     <Box textAlign="right">
@@ -255,7 +257,7 @@ const DashboardHomePage: React.FC<Props> = () => {
 
       <AddRecordModal
         open={isAddRecordModalOpen}
-        onOpenChange={(open) => !open && onCloseAddRecordModal()}
+        onClose={onCloseAddRecordModal}
       />
     </DashboardLayout>
   )

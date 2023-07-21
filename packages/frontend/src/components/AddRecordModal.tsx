@@ -31,15 +31,20 @@ import {
 import type * as DialogPrimitive from '@radix-ui/react-dialog'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-interface Props extends Omit<DialogPrimitive.DialogProps, 'children'> {}
+interface Props extends Omit<DialogPrimitive.DialogProps, 'children'> {
+  onClose?: () => void
+}
 
 const AddRecordModal: React.FC<Props> = (props) => {
   const [isLoading, setIsLoading] = useState(false)
-  const { control, handleSubmit } = useForm<CreateLiverRecordSchema>({
-    resolver: zodResolver(createLiverRecordSchema),
-  })
-
   const [user] = useAuthState(firebaseAuth)
+  const { control, handleSubmit, reset } = useForm<CreateLiverRecordSchema>({
+    resolver: zodResolver(createLiverRecordSchema),
+    defaultValues: {
+      aid: user?.uid,
+      status: 'unevaluated',
+    },
+  })
 
   const toast = useToast({
     position: 'top-right',
@@ -47,9 +52,9 @@ const AddRecordModal: React.FC<Props> = (props) => {
 
   const onSubmit = handleSubmit((data) => {
     setIsLoading(true)
+    console.log({ data })
     addDoc(collection(firebaseFirestore, 'liverRecords'), {
       ...data,
-      aid: user?.uid,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })
@@ -71,11 +76,16 @@ const AddRecordModal: React.FC<Props> = (props) => {
       })
       .finally(() => {
         setIsLoading(false)
+        reset()
+        props.onClose && props?.onClose()
       })
   })
 
   return (
-    <Dialog {...props}>
+    <Dialog
+      {...props}
+      onOpenChange={(open) => !open && props?.onClose && props.onClose()}
+    >
       <DialogContent className="!w-[850px] max-w-[95vw]">
         <DialogHeader>
           <DialogTitle>Add New Record</DialogTitle>

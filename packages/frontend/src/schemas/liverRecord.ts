@@ -5,6 +5,12 @@ export const createLiverRecordSchema = z.object({
     .string({ required_error: 'Title is required' })
     .trim()
     .min(1, { message: 'Title is required' }),
+
+  aid: z
+    .string({ required_error: 'Author id is required' })
+    .trim()
+    .min(1, "Author id can't be empty"),
+  status: z.enum(['unevaluated', 'negative', 'positive']),
   age: z.coerce.number({
     required_error: 'Age is required',
     invalid_type_error: 'Enter a valid number for age',
@@ -18,15 +24,10 @@ export const createLiverRecordSchema = z.object({
       (gender) => [1, 2].indexOf(gender) !== -1,
       'Please select a valid gender value'
     ),
-  directBilirubin: z
-    .string({
-      required_error: 'Direct Bilirubin is required',
-      invalid_type_error: 'Enter a valid number for Direct Bilirubin',
-    })
-    .trim()
-    .min(1, {
-      message: 'Direct Bilirubin is required',
-    }),
+  directBilirubin: z.coerce.number({
+    required_error: 'Direct Bilirubin is required',
+    invalid_type_error: 'Enter a valid number for Direct Bilirubin',
+  }),
   totalBilirubin: z.coerce.number({
     required_error: 'Total Bilirubin is required',
     invalid_type_error: 'Enter a valid number for Total Bilirubin',
