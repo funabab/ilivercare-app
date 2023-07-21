@@ -1,3 +1,4 @@
+import { WithTimestamps } from '@/typings'
 import { z } from 'zod'
 
 export const createLiverRecordSchema = z.object({
@@ -58,3 +59,6 @@ export const createLiverRecordSchema = z.object({
 })
 
 export type CreateLiverRecordSchema = z.infer<typeof createLiverRecordSchema>
+export type GetLiverRecordSchema = WithTimestamps<
+  z.infer<typeof createLiverRecordSchema> & { id: string }
+>

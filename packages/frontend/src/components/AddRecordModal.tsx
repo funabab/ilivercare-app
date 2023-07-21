@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Button,
   FormControl,
@@ -52,7 +52,6 @@ const AddRecordModal: React.FC<Props> = (props) => {
 
   const onSubmit = handleSubmit((data) => {
     setIsLoading(true)
-    console.log({ data })
     addDoc(collection(firebaseFirestore, 'liverRecords'), {
       ...data,
       createdAt: serverTimestamp(),

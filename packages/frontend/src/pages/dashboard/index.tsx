@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import {
   Box,
   Breadcrumb,
@@ -31,6 +31,13 @@ import { window as Window } from '@neutralinojs/lib'
 import { CgMoreVerticalO } from 'react-icons/cg'
 import AddRecordModal from '@/components/AddRecordModal'
 import { Link as RouterLink } from 'react-router-dom'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
+import { collection, query, where } from 'firebase/firestore'
+import { firebaseAuth, firebaseFirestore } from '@/firebase'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { GetLiverRecordSchema } from '@/schemas/liverRecord'
+import Loader from '@/components/Loader'
+import dayjs from 'dayjs'
 
 interface Props {}
 
@@ -41,9 +48,56 @@ const DashboardHomePage: React.FC<Props> = () => {
     onOpen: onOpenAddRecordModal,
   } = useDisclosure()
 
+  const [user] = useAuthState(firebaseAuth)
+  const [_values, isRecordLoading, _error, recordSnapshot] = useCollectionData(
+    user
+      ? query(
+          collection(firebaseFirestore, 'liverRecords'),
+          where('aid', '==', user.uid)
+        )
+      : null,
+    {}
+  )
+
+  const records = recordSnapshot?.docs.map(
+    (snapshot) =>
+      ({
+        ...snapshot.data(),
+        id: snapshot.id,
+      } as GetLiverRecordSchema)
+  )
+
+  const unevaluatedRecords = useMemo(
+    () => records?.filter((record) => record.status === 'unevaluated'),
+    [records]
+  )
+  const negativeRecords = useMemo(
+    () => records?.filter((record) => record.status === 'positive'),
+    [records]
+  )
+  const positiveRecords = useMemo(
+    () => records?.filter((record) => record.status === 'negative'),
+    [records]
+  )
+
   useEffect(() => {
     Window.setTitle('iLiverCare Dashboard').catch((e) => console.log(e))
   }, [])
+
+  const isLoading =
+    isRecordLoading ||
+    !records ||
+    !unevaluatedRecords ||
+    !negativeRecords ||
+    !positiveRecords
+
+  if (isLoading) {
+    return (
+      <Flex justifyContent="center" alignItems="center" w="100vw" h="100vh">
+        <Loader />
+      </Flex>
+    )
+  }
 
   return (
     <DashboardLayout>
@@ -72,7 +126,7 @@ const DashboardHomePage: React.FC<Props> = () => {
                 <Text fontWeight="semibold">Total Records</Text>
               </Flex>
               <Text as="p" textAlign="right" fontSize="4xl" color="green.800">
-                0
+                {records.length}
               </Text>
             </CardBody>
           </Card>
@@ -88,7 +142,7 @@ const DashboardHomePage: React.FC<Props> = () => {
                 <Text fontWeight="semibold">Total Unevaluted Records</Text>
               </Flex>
               <Text as="p" textAlign="right" fontSize="4xl" color="gray.800">
-                0
+                {unevaluatedRecords.length}
               </Text>
             </CardBody>
           </Card>
@@ -101,10 +155,10 @@ const DashboardHomePage: React.FC<Props> = () => {
                 columnGap={5}
               >
                 <Icon as={BiHealth} fontSize="3xl" color="green.800" />
-                <Text fontWeight="semibold">Total Postive Records</Text>
+                <Text fontWeight="semibold">Total Positive Records</Text>
               </Flex>
               <Text as="p" textAlign="right" fontSize="4xl" color="green.800">
-                0
+                {positiveRecords.length}
               </Text>
             </CardBody>
           </Card>
@@ -120,7 +174,7 @@ const DashboardHomePage: React.FC<Props> = () => {
                 <Text fontWeight="semibold">Total Negative Records</Text>
               </Flex>
               <Text as="p" textAlign="right" fontSize="4xl" color="red.800">
-                0
+                {negativeRecords.length}
               </Text>
             </CardBody>
           </Card>
@@ -160,95 +214,48 @@ const DashboardHomePage: React.FC<Props> = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td fontSize="sm" isNumeric>
-                    1
-                  </Td>
-                  <Td>
-                    <RouterLink to={`/dashboard/record/1`}>
-                      <Text maxW="50ch" isTruncated>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing
-                        elit. Deleniti eveniet voluptas consequuntur officiis
-                        animi earum at, nobis modi explicabo. Libero!
+                {records.map((record, index) => (
+                  <Tr key={record.id}>
+                    <Td fontSize="sm" isNumeric>
+                      {index + 1}
+                    </Td>
+                    <Td>
+                      <RouterLink to={`/dashboard/record/${record.id}`}>
+                        <Text maxW="50ch" isTruncated>
+                          {record.title}
+                        </Text>
+                      </RouterLink>
+                    </Td>
+                    <Td>{record.age}</Td>
+                    <Td>{{ '1': 'Male', '2': 'Female' }[record.gender]}</Td>
+                    <Td>
+                      {dayjs(record.createdAt?.toDate()).format('DD, MMM YYYY')}
+                    </Td>
+                    <Td>
+                      <Text
+                        color={
+                          record.status === 'negative'
+                            ? 'red.700'
+                            : record.status === 'positive'
+                            ? 'green.700'
+                            : 'gray.700'
+                        }
+                        textTransform="capitalize"
+                      >
+                        {record.status}
                       </Text>
-                    </RouterLink>
-                  </Td>
-                  <Td>65</Td>
-                  <Td>Male</Td>
-                  <Td>25, July 2023</Td>
-                  <Td>
-                    <Text color="gray.700" textTransform="capitalize">
-                      Unevaluated
-                    </Text>
-                  </Td>
-                  <Td>
-                    <Box textAlign="right">
-                      <IconButton
-                        aria-label="more action"
-                        variant="ghost"
-                        icon={<CgMoreVerticalO />}
-                      />
-                    </Box>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td fontSize="sm" isNumeric>
-                    2
-                  </Td>
-                  <Td>
-                    <RouterLink to={`/dashboard/record/2`}>
-                      <Text maxW="50ch" isTruncated>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing
-                        elit. Quae, quibusdam! Nam dolor optio rerum molestiae,
-                        ad veniam officiis voluptatem? Eius?
-                      </Text>
-                    </RouterLink>
-                  </Td>
-                  <Td>65</Td>
-                  <Td>Female</Td>
-                  <Td>25, July 2023</Td>
-                  <Td>
-                    <Text color="green.700">Positive</Text>
-                  </Td>
-                  <Td>
-                    <Box textAlign="right">
-                      <IconButton
-                        aria-label="more action"
-                        variant="ghost"
-                        icon={<CgMoreVerticalO />}
-                      />
-                    </Box>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td fontSize="sm" isNumeric>
-                    3
-                  </Td>
-                  <Td>
-                    <RouterLink to={`/dashboard/record/1`}>
-                      <Text maxW="50ch" isTruncated>
-                        Lorem, ipsum dolor sit amet consectetur adipisicing
-                        elit. Cumque distinctio quos, earum ex repudiandae nam
-                        ea eius debitis natus quam!
-                      </Text>
-                    </RouterLink>
-                  </Td>
-                  <Td>25</Td>
-                  <Td>Male</Td>
-                  <Td>25, July 2023</Td>
-                  <Td>
-                    <Text color="red.700">Negative</Text>
-                  </Td>
-                  <Td>
-                    <Box textAlign="right">
-                      <IconButton
-                        aria-label="more action"
-                        variant="ghost"
-                        icon={<CgMoreVerticalO />}
-                      />
-                    </Box>
-                  </Td>
-                </Tr>
+                    </Td>
+                    <Td>
+                      <Box textAlign="right">
+                        <IconButton
+                          aria-label="more action"
+                          variant="ghost"
+                          icon={<CgMoreVerticalO />}
+                        />
+                      </Box>
+                    </Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </TableContainer>

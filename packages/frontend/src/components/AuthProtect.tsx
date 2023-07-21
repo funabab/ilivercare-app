@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Flex } from '@chakra-ui/react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { firebaseAuth } from '../firebase'
+import Loader from './Loader'
 
 interface Props {}
 
@@ -26,15 +27,7 @@ const AuthProtect: React.FC<React.PropsWithChildren<Props>> = ({
   if (isLoading) {
     return (
       <Flex w="100vw" h="100vh" justifyContent="center" alignItems="center">
-        <Bars
-          height="80"
-          width="80"
-          color="#4fa94d"
-          ariaLabel="bars-loading"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-        />
+        <Loader />
       </Flex>
     )
   }

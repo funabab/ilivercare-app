@@ -298,7 +298,7 @@ const VerifyEmailPage: React.FC<Props> = () => {
               })
             })
             .catch((e) => {
-              console.log(e)
+              console.error(e)
             })
         }
         mt="10"
