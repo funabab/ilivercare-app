@@ -27,7 +27,7 @@ import { RegisterBody, regsiterBodySchema } from '../../schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useHttpsCallable } from 'react-firebase-hooks/functions'
 import { firebaseFunctions } from '../../firebase'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link as RouterLink } from 'react-router-dom'
 
 interface Props {}
 
@@ -283,7 +283,8 @@ const RegisterPage: React.FC<Props> = () => {
             or
           </Text>
           <Link
-            href="/"
+            to="/"
+            as={RouterLink}
             color="blue.600"
             textTransform="capitalize"
             fontWeight="semibold"

@@ -14,6 +14,7 @@ import {
   useSendEmailVerification,
 } from 'react-firebase-hooks/auth'
 import { firebaseAuth } from '../../firebase'
+import { Link as RouterLink } from 'react-router-dom'
 
 interface Props {}
 
@@ -311,7 +312,8 @@ const VerifyEmailPage: React.FC<Props> = () => {
           or
         </Text>
         <Link
-          href="/"
+          to="/"
+          as={RouterLink}
           color="blue.600"
           textTransform="capitalize"
           fontWeight="semibold"

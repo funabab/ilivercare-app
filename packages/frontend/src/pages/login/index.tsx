@@ -26,7 +26,7 @@ import { LoginBody, loginBodySchema } from '../../schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
 import { errors, firebaseAuth } from '../../firebase'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link as RouterLink } from 'react-router-dom'
 
 interface Props {}
 
@@ -211,7 +211,8 @@ const LoginPage: React.FC<Props> = () => {
             or
           </Text>
           <Link
-            href="/register"
+            to="/register"
+            as={RouterLink}
             color="blue.600"
             textTransform="capitalize"
             fontWeight="semibold"

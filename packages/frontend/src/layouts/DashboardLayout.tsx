@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import AuthProtect from '../components/AuthProtect'
 import Header from '../components/Header'
 import { Box, Flex } from '@chakra-ui/react'
-import { window as Window } from '@neutralinojs/lib'
 import {
   Menubar,
   MenubarContent,
@@ -20,16 +19,6 @@ const DashboardLayout: React.FC<React.PropsWithChildren<Props>> = ({
   children,
 }) => {
   const [logout, isLoading] = useSignOut(firebaseAuth)
-
-  useEffect(() => {
-    Window.maximize()
-      .then(() =>
-        Window.setSize({
-          minWidth: 1280,
-        })
-      )
-      .catch((e) => console.log(e))
-  }, [])
   return (
     <AuthProtect>
       <Flex w="100vw" h="100vh" direction="column">
