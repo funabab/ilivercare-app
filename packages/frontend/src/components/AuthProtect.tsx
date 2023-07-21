@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { firebaseAuth } from '../firebase'
 import { LoaderScreen } from './Loader'
+import { Flex } from '@chakra-ui/react'
 
 interface Props {
   redirectTo?: string
@@ -22,7 +23,11 @@ const AuthProtect: React.FC<React.PropsWithChildren<Props>> = ({
   }, [user, isLoading, navigate, redirectTo])
 
   if (isLoading) {
-    return <LoaderScreen />
+    return (
+      <Flex w="100vw" h="100vh" position="relative">
+        <LoaderScreen />
+      </Flex>
+    )
   }
 
   return children

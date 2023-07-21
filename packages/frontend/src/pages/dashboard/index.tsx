@@ -127,7 +127,7 @@ const DashboardHomePage: React.FC<Props> = () => {
                 columnGap={5}
               >
                 <Icon as={BiHealth} fontSize="3xl" color="green.800" />
-                <Text fontWeight="semibold">Total</Text>
+                <Text fontWeight="semibold">Total Records</Text>
               </Flex>
               <Text as="p" textAlign="right" fontSize="4xl" color="green.800">
                 {records.length}
