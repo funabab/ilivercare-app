@@ -8,6 +8,7 @@ import {
   Img,
   Text,
   Button,
+  Link,
 } from '@chakra-ui/react'
 import { RxAvatar } from 'react-icons/rx'
 import { useAuthState, useSignOut } from 'react-firebase-hooks/auth'
@@ -18,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
+import { Link as RouterLink } from 'react-router-dom'
 
 interface Props {}
 
@@ -50,17 +52,19 @@ const Header: React.FC<Props> = () => {
         alignItems="center"
       >
         <Box>
-          <Heading
-            as="h1"
-            fontSize="xl"
-            color="gray.700"
-            display="flex"
-            alignItems="center"
-            columnGap={4}
-          >
-            <Img src="/logo.png" h="10" />
-            <Text fontSize="md">iLiverCare</Text>
-          </Heading>
+          <Link as={RouterLink} to="/">
+            <Heading
+              as="h1"
+              fontSize="xl"
+              color="gray.700"
+              display="flex"
+              alignItems="center"
+              columnGap={4}
+            >
+              <Img src="/logo.png" h="10" />
+              <Text fontSize="md">iLiverCare</Text>
+            </Heading>
+          </Link>
         </Box>
         <DropdownMenu>
           <DropdownMenuTrigger>

@@ -1,19 +1,27 @@
+import { Flex } from '@chakra-ui/react'
 import React from 'react'
-import { Bars } from 'react-loader-spinner'
+import { Dna } from 'react-loader-spinner'
 
 interface Props {}
 
 const Loader: React.FC<Props> = () => {
   return (
-    <Bars
+    <Dna
+      visible={true}
       height="80"
       width="80"
-      color="#4fa94d"
-      ariaLabel="bars-loading"
+      ariaLabel="dna-loading"
       wrapperStyle={{}}
-      wrapperClass=""
-      visible={true}
+      wrapperClass="dna-wrapper"
     />
+  )
+}
+
+export const LoaderScreen: React.FC<Props> = () => {
+  return (
+    <Flex w="full" h="full" alignItems="center" justifyContent="center">
+      <Loader />
+    </Flex>
   )
 }
 

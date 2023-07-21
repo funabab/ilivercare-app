@@ -9,6 +9,8 @@ import LoginPage from './pages/login/index.tsx'
 import RegisterPage from './pages/register/index.tsx'
 import VerifyEmailPage from './pages/verify-email/index.tsx'
 import DashboardHomePage from './pages/dashboard/index.tsx'
+import DashboardRecordPage from './pages/dashboard/record/index.tsx'
+import DashboardLayout from './layouts/DashboardLayout.tsx'
 
 const routes = createBrowserRouter([
   {
@@ -25,7 +27,19 @@ const routes = createBrowserRouter([
   },
   {
     path: '/dashboard',
-    element: <DashboardHomePage />,
+    element: (
+      <DashboardLayout>
+        <DashboardHomePage />
+      </DashboardLayout>
+    ),
+  },
+  {
+    path: '/dashboard/record/:recordId',
+    element: (
+      <DashboardLayout>
+        <DashboardRecordPage />
+      </DashboardLayout>
+    ),
   },
 ])
 

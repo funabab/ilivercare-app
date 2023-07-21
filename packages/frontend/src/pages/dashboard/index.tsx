@@ -36,7 +36,7 @@ import { collection, query, where } from 'firebase/firestore'
 import { firebaseAuth, firebaseFirestore } from '@/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { GetLiverRecordSchema } from '@/schemas/liverRecord'
-import Loader from '@/components/Loader'
+import { LoaderScreen } from '@/components/Loader'
 import dayjs from 'dayjs'
 
 interface Props {}
@@ -92,15 +92,11 @@ const DashboardHomePage: React.FC<Props> = () => {
     !positiveRecords
 
   if (isLoading) {
-    return (
-      <Flex justifyContent="center" alignItems="center" w="100vw" h="100vh">
-        <Loader />
-      </Flex>
-    )
+    return <LoaderScreen />
   }
 
   return (
-    <DashboardLayout>
+    <React.Fragment>
       <Container maxW="container.xl" py={10}>
         <Breadcrumb>
           <BreadcrumbItem isCurrentPage>
@@ -123,7 +119,7 @@ const DashboardHomePage: React.FC<Props> = () => {
                 columnGap={5}
               >
                 <Icon as={BiHealth} fontSize="3xl" color="green.800" />
-                <Text fontWeight="semibold">Total Records</Text>
+                <Text fontWeight="semibold">Total</Text>
               </Flex>
               <Text as="p" textAlign="right" fontSize="4xl" color="green.800">
                 {records.length}
@@ -139,7 +135,7 @@ const DashboardHomePage: React.FC<Props> = () => {
                 columnGap={5}
               >
                 <Icon as={BiHealth} fontSize="3xl" color="gray.800" />
-                <Text fontWeight="semibold">Total Unevaluted Records</Text>
+                <Text fontWeight="semibold">Total Unevaluted</Text>
               </Flex>
               <Text as="p" textAlign="right" fontSize="4xl" color="gray.800">
                 {unevaluatedRecords.length}
@@ -155,7 +151,7 @@ const DashboardHomePage: React.FC<Props> = () => {
                 columnGap={5}
               >
                 <Icon as={BiHealth} fontSize="3xl" color="green.800" />
-                <Text fontWeight="semibold">Total Positive Records</Text>
+                <Text fontWeight="semibold">Total Positive</Text>
               </Flex>
               <Text as="p" textAlign="right" fontSize="4xl" color="green.800">
                 {positiveRecords.length}
@@ -171,7 +167,7 @@ const DashboardHomePage: React.FC<Props> = () => {
                 columnGap={5}
               >
                 <Icon as={BiHealth} fontSize="3xl" color="red.800" />
-                <Text fontWeight="semibold">Total Negative Records</Text>
+                <Text fontWeight="semibold">Total Negative</Text>
               </Flex>
               <Text as="p" textAlign="right" fontSize="4xl" color="red.800">
                 {negativeRecords.length}
@@ -229,7 +225,9 @@ const DashboardHomePage: React.FC<Props> = () => {
                     <Td>{record.age}</Td>
                     <Td>{{ '1': 'Male', '2': 'Female' }[record.gender]}</Td>
                     <Td>
-                      {dayjs(record.createdAt?.toDate()).format('DD, MMM YYYY')}
+                      {dayjs(record.createdAt?.toDate()).format(
+                        'DD, MMM YYYY HH:mm:ss'
+                      )}
                     </Td>
                     <Td>
                       <Text
@@ -266,7 +264,7 @@ const DashboardHomePage: React.FC<Props> = () => {
         open={isAddRecordModalOpen}
         onClose={onCloseAddRecordModal}
       />
-    </DashboardLayout>
+    </React.Fragment>
   )
 }
 

@@ -22,7 +22,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren<Props>> = ({
   return (
     <AuthProtect>
       <Flex w="100vw" h="100vh" direction="column">
-        <Menubar className="bg-slate-600 text-white border-none rounded-none">
+        <Menubar className="bg-slate-600 text-white border-none rounded-none shrink-0">
           <MenubarMenu>
             <MenubarTrigger className="font-semibold">File</MenubarTrigger>
             <MenubarContent>
@@ -35,7 +35,9 @@ const DashboardLayout: React.FC<React.PropsWithChildren<Props>> = ({
           </MenubarMenu>
         </Menubar>
         <Header />
-        <Box flexGrow={1}>{children}</Box>
+        <Box flexGrow={1} position="relative" minH={0} overflowX="auto">
+          {children}
+        </Box>
       </Flex>
     </AuthProtect>
   )
