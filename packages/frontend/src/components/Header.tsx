@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import { Link as RouterLink } from 'react-router-dom'
+import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu'
 
 interface Props {}
 
@@ -67,7 +68,7 @@ const Header: React.FC<Props> = () => {
           </Link>
         </Box>
         <DropdownMenu>
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               display="flex"
@@ -85,7 +86,7 @@ const Header: React.FC<Props> = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => logout()} disabled={isLoading}>
-              Logout
+              <DropdownMenuLabel>Logout</DropdownMenuLabel>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

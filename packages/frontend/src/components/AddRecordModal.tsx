@@ -60,7 +60,7 @@ const AddRecordModal: React.FC<Props> = (props) => {
       .then(() => {
         toast({
           status: 'success',
-          title: 'Successs',
+          title: 'Success',
           description: 'Record added successfully',
         })
       })

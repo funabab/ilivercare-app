@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import DashboardLayout from '@/layouts/DashboardLayout'
 import {
   Breadcrumb,
   BreadcrumbItem,

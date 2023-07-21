@@ -19,6 +19,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren<Props>> = ({
   children,
 }) => {
   const [logout, isLoading] = useSignOut(firebaseAuth)
+
   return (
     <AuthProtect>
       <Flex w="100vw" h="100vh" direction="column">

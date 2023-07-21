@@ -24,20 +24,26 @@ import {
   ButtonGroup,
   useDisclosure,
 } from '@chakra-ui/react'
-import DashboardLayout from '../../layouts/DashboardLayout'
 import { BiHealth } from 'react-icons/bi'
 import { MdAdd } from 'react-icons/md'
 import { window as Window } from '@neutralinojs/lib'
 import { CgMoreVerticalO } from 'react-icons/cg'
 import AddRecordModal from '@/components/AddRecordModal'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { collection, query, where } from 'firebase/firestore'
+import { collection, deleteDoc, doc, query, where } from 'firebase/firestore'
 import { firebaseAuth, firebaseFirestore } from '@/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { GetLiverRecordSchema } from '@/schemas/liverRecord'
 import { LoaderScreen } from '@/components/Loader'
 import dayjs from 'dayjs'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 interface Props {}
 
@@ -47,6 +53,8 @@ const DashboardHomePage: React.FC<Props> = () => {
     onClose: onCloseAddRecordModal,
     onOpen: onOpenAddRecordModal,
   } = useDisclosure()
+
+  const navigate = useNavigate()
 
   const [user] = useAuthState(firebaseAuth)
   const [_values, isRecordLoading, _error, recordSnapshot] = useCollectionData(
@@ -245,11 +253,46 @@ const DashboardHomePage: React.FC<Props> = () => {
                     </Td>
                     <Td>
                       <Box textAlign="right">
-                        <IconButton
-                          aria-label="more action"
-                          variant="ghost"
-                          icon={<CgMoreVerticalO />}
-                        />
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <IconButton
+                              aria-label="more action"
+                              variant="ghost"
+                              size="lg"
+                              icon={<CgMoreVerticalO />}
+                            />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="z-50">
+                            <DropdownMenuItem
+                              onClick={() =>
+                                navigate(`/dashboard/record/${record.id}`)
+                              }
+                            >
+                              <DropdownMenuLabel>View</DropdownMenuLabel>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem>
+                              <DropdownMenuLabel>Edit</DropdownMenuLabel>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem>
+                              <DropdownMenuLabel
+                                className="text-red-700"
+                                onClick={() =>
+                                  deleteDoc(
+                                    doc(
+                                      firebaseFirestore,
+                                      'liverRecords',
+                                      record.id
+                                    )
+                                  )
+                                }
+                              >
+                                Delete
+                              </DropdownMenuLabel>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </Box>
                     </Td>
                   </Tr>
