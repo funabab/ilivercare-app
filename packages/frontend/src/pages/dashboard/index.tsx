@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Box,
   Breadcrumb,
@@ -44,6 +44,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { EditIcon } from 'lucide-react'
+import EditRecordModal from '@/components/EditRecordModal'
 
 interface Props {}
 
@@ -57,6 +59,9 @@ const DashboardHomePage: React.FC<Props> = () => {
   const navigate = useNavigate()
 
   const [user] = useAuthState(firebaseAuth)
+  const [editedRecord, setEditedRecord] = useState<
+    GetLiverRecordSchema | undefined
+  >()
   const [_values, isRecordLoading, _error, recordSnapshot] = useCollectionData(
     user
       ? query(
@@ -271,7 +276,9 @@ const DashboardHomePage: React.FC<Props> = () => {
                               <DropdownMenuLabel>View</DropdownMenuLabel>
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => setEditedRecord(record)}
+                            >
                               <DropdownMenuLabel>Edit</DropdownMenuLabel>
                             </DropdownMenuItem>
 
@@ -307,6 +314,14 @@ const DashboardHomePage: React.FC<Props> = () => {
         open={isAddRecordModalOpen}
         onClose={onCloseAddRecordModal}
       />
+
+      {editedRecord && (
+        <EditRecordModal
+          record={editedRecord}
+          open={true}
+          onClose={() => setEditedRecord(undefined)}
+        />
+      )}
     </React.Fragment>
   )
 }

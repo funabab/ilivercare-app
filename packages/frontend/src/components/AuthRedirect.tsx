@@ -22,8 +22,6 @@ const AuthRedirect: React.FC<React.PropsWithChildren<Props>> = ({
     }
   }, [user, navigate, redirectTo])
 
-  console.log({ user, isLoading })
-
   if (isLoading) {
     return (
       <Flex w="100vw" h="100vh" position="relative">
