@@ -21,13 +21,13 @@ import { MdAlternateEmail } from 'react-icons/md'
 import { RiLockPasswordFill } from 'react-icons/ri'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 import { BiSolidUser } from 'react-icons/bi'
-import { window as Window } from '@neutralinojs/lib'
 import { Controller, useForm } from 'react-hook-form'
 import { RegisterBody, regsiterBodySchema } from '../../schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useHttpsCallable } from 'react-firebase-hooks/functions'
 import { firebaseFunctions } from '../../firebase'
 import { useNavigate, Link as RouterLink } from 'react-router-dom'
+import { window as Window } from '@tauri-apps/api'
 
 interface Props {}
 
@@ -53,8 +53,8 @@ const RegisterPage: React.FC<Props> = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      await Window.setTitle('Create an account')
-      await Window.maximize()
+      await Window.getCurrent().setTitle('Create an account')
+      await Window.getCurrent().maximize()
     }
     initialize().catch((e) => {
       console.error(e)

@@ -19,7 +19,6 @@ import {
 } from '@chakra-ui/react'
 import { MdAlternateEmail } from 'react-icons/md'
 import { RiLockPasswordFill } from 'react-icons/ri'
-import { window as Window } from '@neutralinojs/lib'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 import { Controller, useForm } from 'react-hook-form'
 import { LoginBody, loginBodySchema } from '../../schemas'
@@ -28,10 +27,13 @@ import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
 import { errors, firebaseAuth } from '../../firebase'
 import { useNavigate, Link as RouterLink } from 'react-router-dom'
 import AuthRedirect from '@/components/AuthRedirect'
+import { useWindowProps } from '@/hooks/useWindowProps'
 
 interface Props {}
 
 const LoginPage: React.FC<Props> = () => {
+  useWindowProps({ title: 'Login to IliverCare App', maximized: true })
+
   const [showPassword, setShowPassword] = useState(false)
   const handleClick = useCallback(() => {
     setShowPassword((state) => !state)
@@ -67,17 +69,6 @@ const LoginPage: React.FC<Props> = () => {
       })
     }
   }, [error, toast, navigate])
-
-  useEffect(() => {
-    const initialize = async () => {
-      await Window.setTitle('Login to IliverCare App')
-      await Window.maximize()
-    }
-
-    initialize().catch((e) => {
-      console.error(e)
-    })
-  }, [])
 
   const onSubmit = handleSubmit((data) => {
     login(data.email, data.password)

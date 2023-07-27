@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/menubar'
 import { useSignOut } from 'react-firebase-hooks/auth'
 import { firebaseAuth } from '@/firebase'
-import { app } from '@neutralinojs/lib'
+import { process } from '@tauri-apps/api'
 
 interface Props {}
 
@@ -31,7 +31,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren<Props>> = ({
               <MenubarItem onClick={() => logout()} disabled={isLoading}>
                 Logout
               </MenubarItem>
-              <MenubarItem onClick={() => app.exit()}>Exit</MenubarItem>
+              <MenubarItem onClick={() => process.exit()}>Exit</MenubarItem>
             </MenubarContent>
           </MenubarMenu>
         </Menubar>

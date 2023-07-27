@@ -1,16 +1,26 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { beforeUserSignedIn } from 'firebase-functions/v2/identity'
 import { getAuth } from 'firebase-admin/auth'
 import { signInWithCustomToken, sendEmailVerification } from 'firebase/auth'
 import { FirebaseError } from '@firebase/util'
 import { initializeApp } from 'firebase-admin/app'
-import { regsiterBodySchema } from '../../src/schemas'
+import {
+  regsiterBodySchema,
+  getLiverRecordPredictionSchema,
+} from '../../src/schemas'
 import { ZodError } from 'zod'
 import { initializeApp as initializeClientApp } from 'firebase/app'
+import { getFirestore } from 'firebase-admin/firestore'
 import { getAuth as getClientAuth } from 'firebase/auth'
+import model from '../model.json'
+import Classifier from 'ml-knn'
 
 declare const process: { env: Record<string, string> }
 initializeApp()
+
+const classifier = Classifier.load(model)
 
 export const registerAccount = onCall({ maxInstances: 10 }, async (request) => {
   const firebaseClientApp = initializeClientApp({
@@ -79,6 +89,70 @@ export const beforeUserSignedInHandler = beforeUserSignedIn(
       )
     } else if (!user?.customClaims?.role) {
       throw new HttpsError('aborted', 'Role not set')
+    }
+  }
+)
+
+export const predictLiverRecord = onCall(
+  { maxInstances: 10 },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', 'User not authenticated')
+    }
+
+    try {
+      const data = getLiverRecordPredictionSchema.parse(request.data)
+      const liverRecordDoc = await getFirestore()
+        .doc(`liverRecord/${data.recordId}`)
+        .get()
+
+      if (
+        !liverRecordDoc.exists ||
+        liverRecordDoc.data()?.aid !== request.auth?.uid
+      ) {
+        throw new HttpsError('not-found', 'Record not found')
+      }
+
+      const [prediction] = classifier.predict([
+        data.age,
+        data.gender,
+        data.totalBilirubin,
+        data.directBilirubin,
+        data.alkalinePhosphotase,
+        data.alamineAminotransferase,
+        data.aspartateAminotransferase,
+        data.totalProtiens,
+        data.albumin,
+        data.albuminAndGlobulinRatio,
+      ]) as number[]
+
+      await getFirestore()
+        .doc(`liverRecord/${data.recordId}`)
+        .update({
+          status: prediction === 1 ? 'positive' : 'negative',
+        })
+
+      return {
+        success: true,
+        message: 'Prediction updated successful',
+      }
+    } catch (e) {
+      console.log('Error /registerAccount', e)
+      if (e instanceof ZodError) {
+        throw new HttpsError('invalid-argument', 'Invalid input')
+      } else if (e instanceof Error) {
+        const error = e as FirebaseError
+        if (error.code === 'auth/email-already-exists') {
+          throw new HttpsError(
+            'already-exists',
+            'Account with email already exists'
+          )
+        }
+      }
+      throw new HttpsError(
+        'internal',
+        'Something went wrong while creating account'
+      )
     }
   }
 )

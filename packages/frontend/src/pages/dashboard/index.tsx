@@ -23,10 +23,10 @@ import {
   Button,
   ButtonGroup,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react'
 import { BiHealth } from 'react-icons/bi'
 import { MdAdd } from 'react-icons/md'
-import { window as Window } from '@neutralinojs/lib'
 import { CgMoreVerticalO } from 'react-icons/cg'
 import AddRecordModal from '@/components/AddRecordModal'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
@@ -44,8 +44,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { EditIcon } from 'lucide-react'
 import EditRecordModal from '@/components/EditRecordModal'
+import { useWindowProps } from '@/hooks/useWindowProps'
 
 interface Props {}
 
@@ -56,12 +56,14 @@ const DashboardHomePage: React.FC<Props> = () => {
     onOpen: onOpenAddRecordModal,
   } = useDisclosure()
 
+  useWindowProps({ title: 'iLiverCare Dashboard' })
   const navigate = useNavigate()
 
   const [user] = useAuthState(firebaseAuth)
   const [editedRecord, setEditedRecord] = useState<
     GetLiverRecordSchema | undefined
   >()
+
   const [_values, isRecordLoading, _error, recordSnapshot] = useCollectionData(
     user
       ? query(
@@ -71,6 +73,9 @@ const DashboardHomePage: React.FC<Props> = () => {
       : null,
     {}
   )
+  const toast = useToast({
+    position: 'top-right',
+  })
 
   const records = recordSnapshot?.docs.map(
     (snapshot) =>
@@ -92,10 +97,6 @@ const DashboardHomePage: React.FC<Props> = () => {
     () => records?.filter((record) => record.status === 'negative'),
     [records]
   )
-
-  useEffect(() => {
-    Window.setTitle('iLiverCare Dashboard').catch((e) => console.log(e))
-  }, [])
 
   const isLoading =
     isRecordLoading ||

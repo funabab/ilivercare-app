@@ -5,12 +5,11 @@
     "packages/**"
   ],
   "scripts": {
-    "frontend:dev": "npm run dev --prefix packages/frontend",
-    "app:dev": "neu run --frontend-lib-dev -- --window-enable-inspector",
-    "dev": "concurrently -k \"npm run frontend:dev\" \"wait-on tcp:5173 && npm run app:dev\""
+    "dev": "npm run dev --prefix packages/frontend",
+    "build": "npm run build --prefix packages/frontend",
+    "tauri": "tauri"
   },
   "devDependencies": {
-    "concurrently": "^8.2.0",
-    "wait-on": "^7.0.1"
+    "@tauri-apps/cli": "^1.4.0"
   }
 }

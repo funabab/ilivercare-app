@@ -1,7 +1,6 @@
 import React from 'react'
 import '@/styles/global.css'
 import ReactDOM from 'react-dom/client'
-import { init } from '@neutralinojs/lib'
 import { ChakraBaseProvider } from '@chakra-ui/react'
 import { theme } from './chakra/theme.ts'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
@@ -50,5 +49,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </ChakraBaseProvider>
   </React.StrictMode>
 )
-
-init()

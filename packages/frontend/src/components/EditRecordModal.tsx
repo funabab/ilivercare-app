@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Button,
   FormControl,
@@ -19,7 +19,7 @@ import {
   updateLiverRecordSchema,
 } from '@/schemas/liverRecord'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { updateDoc, doc, getDoc } from 'firebase/firestore'
+import { updateDoc, doc } from 'firebase/firestore'
 import { firebaseFirestore } from '@/firebase'
 import {
   Dialog,
