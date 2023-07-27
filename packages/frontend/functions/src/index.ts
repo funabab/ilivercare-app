@@ -103,7 +103,7 @@ export const predictLiverRecord = onCall(
     try {
       const data = getLiverRecordPredictionSchema.parse(request.data)
       const liverRecordDoc = await getFirestore()
-        .doc(`liverRecord/${data.recordId}`)
+        .doc(`liverRecords/${data.recordId}`)
         .get()
 
       if (
@@ -113,7 +113,7 @@ export const predictLiverRecord = onCall(
         throw new HttpsError('not-found', 'Record not found')
       }
 
-      const [prediction] = classifier.predict([
+      const prediction = classifier.predict([
         data.age,
         data.gender,
         data.totalBilirubin,
@@ -124,10 +124,10 @@ export const predictLiverRecord = onCall(
         data.totalProtiens,
         data.albumin,
         data.albuminAndGlobulinRatio,
-      ]) as number[]
+      ]) as number
 
       await getFirestore()
-        .doc(`liverRecord/${data.recordId}`)
+        .doc(`liverRecords/${data.recordId}`)
         .update({
           status: prediction === 1 ? 'positive' : 'negative',
         })
@@ -137,7 +137,7 @@ export const predictLiverRecord = onCall(
         message: 'Prediction updated successful',
       }
     } catch (e) {
-      console.log('Error /registerAccount', e)
+      console.log('Error /predictLiverRecord', e)
       if (e instanceof ZodError) {
         throw new HttpsError('invalid-argument', 'Invalid input')
       } else if (e instanceof Error) {

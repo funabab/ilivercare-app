@@ -10,21 +10,31 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  useToast,
 } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
 import { doc } from 'firebase/firestore'
-import { firebaseFirestore } from '@/firebase'
+import { firebaseFirestore, firebaseFunctions } from '@/firebase'
 import { LoaderScreen } from '@/components/Loader'
 import { FirebaseError } from 'firebase/app'
 import { GetLiverRecordSchema } from '@/schemas/liverRecord'
+import { useHttpsCallable } from 'react-firebase-hooks/functions'
 
 interface Props {}
 
 const DashboardRecordPage: React.FC<Props> = () => {
   const { recordId } = useParams()
   const navigate = useNavigate()
+  const [runLiverPrediction, isPredicting] = useHttpsCallable(
+    firebaseFunctions,
+    'predictLiverRecord'
+  )
+  const toast = useToast({
+    position: 'top-right',
+  })
+
   const [_value, loading, error, recordSnapshot] = useDocumentData(
     recordId ? doc(firebaseFirestore, 'liverRecords', recordId) : null
   )
@@ -225,6 +235,25 @@ const DashboardRecordPage: React.FC<Props> = () => {
                 gridColumnEnd={3}
                 size="lg"
                 colorScheme="green"
+                isLoading={isPredicting}
+                onClick={() => {
+                  runLiverPrediction({ ...record, recordId: record.id })
+                    .then(() => {
+                      toast({
+                        status: 'success',
+                        title: 'Success',
+                        description: 'Model status updated',
+                      })
+                    })
+                    .catch(() => {
+                      toast({
+                        status: 'error',
+                        title: 'Error',
+                        description:
+                          'An error occurred while running prediction',
+                      })
+                    })
+                }}
               >
                 Prediction
               </Button>

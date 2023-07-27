@@ -26,7 +26,7 @@ declare module 'ml-knn' {
         distance?: (a: any[], b: any[]) => number
       }
     )
-    predict(dataset: any[] | any[][]): any[] | any[][]
+    predict(dataset: any[] | any[][]): number | number[] | number[][]
     toJSON(): {
       name: string
       kdTree: KDTreeNode

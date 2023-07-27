@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   Box,
   Breadcrumb,
@@ -106,7 +106,6 @@ const DashboardHomePage: React.FC<Props> = () => {
     }
 
     const downloadDir = await path.documentDir()
-
     const filePath = await dialog.save({
       defaultPath: downloadDir + 'record.csv',
     })
@@ -130,6 +129,7 @@ const DashboardHomePage: React.FC<Props> = () => {
           }))
         )
       )
+
       toast({
         status: 'success',
         title: 'Success',
