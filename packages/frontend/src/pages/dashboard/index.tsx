@@ -46,6 +46,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import EditRecordModal from '@/components/EditRecordModal'
 import { useWindowProps } from '@/hooks/useWindowProps'
+import { dialog, fs, path } from '@tauri-apps/api'
+import { unparse as toCSV } from 'papaparse'
 
 interface Props {}
 
@@ -97,6 +99,44 @@ const DashboardHomePage: React.FC<Props> = () => {
     () => records?.filter((record) => record.status === 'negative'),
     [records]
   )
+
+  const handleOnExport = async () => {
+    if (!records) {
+      return
+    }
+
+    const downloadDir = await path.documentDir()
+
+    const filePath = await dialog.save({
+      defaultPath: downloadDir + 'record.csv',
+    })
+
+    if (filePath) {
+      await fs.writeFile(
+        filePath,
+        toCSV(
+          records.map((record) => ({
+            Age: record.age,
+            Gender: record.gender,
+            Total_Bilirubin: record.totalBilirubin,
+            Direct_Bilirubin: record.directBilirubin,
+            Alkaline_Phosphotase: record.alkalinePhosphotase,
+            Alamine_Aminotransferase: record.alamineAminotransferase,
+            Aspartate_Aminotransferase: record.aspartateAminotransferase,
+            Total_Protiens: record.totalProtiens,
+            Albumin: record.albumin,
+            Albumin_and_Globulin_Ratio: record.albuminAndGlobulinRatio,
+            Status: record.status,
+          }))
+        )
+      )
+      toast({
+        status: 'success',
+        title: 'Success',
+        description: 'Records exported successfully',
+      })
+    }
+  }
 
   const isLoading =
     isRecordLoading ||
@@ -201,7 +241,11 @@ const DashboardHomePage: React.FC<Props> = () => {
                 Add Record
               </Button>
 
-              <Button colorScheme="green" variant="outline">
+              <Button
+                colorScheme="green"
+                variant="outline"
+                onClick={() => handleOnExport()}
+              >
                 Export Records
               </Button>
             </ButtonGroup>
