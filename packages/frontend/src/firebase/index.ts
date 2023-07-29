@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { indexedDBLocalPersistence, initializeAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getFunctions } from 'firebase/functions'
 
@@ -13,7 +13,9 @@ export const firebaseConfig = {
 }
 
 export const firebaseApp = initializeApp(firebaseConfig)
-export const firebaseAuth = getAuth(firebaseApp)
+export const firebaseAuth = initializeAuth(firebaseApp, {
+  persistence: indexedDBLocalPersistence,
+})
 export const firebaseFunctions = getFunctions(firebaseApp)
 export const firebaseFirestore = getFirestore(firebaseApp)
 
